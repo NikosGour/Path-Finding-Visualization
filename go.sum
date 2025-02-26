@@ -1,7 +1,11 @@
+github.com/NikosGour/logging v0.1.4 h1:sbUn9+/23Be2g+0tU6iR4eLoOHKoNgdl7OyBfCGF7kc=
+github.com/NikosGour/logging v0.1.4/go.mod h1:LAqi5AhghslpJwTIukrAdgCMNpN9g3uZ6uLqEHCUBvc=
 github.com/ebitengine/purego v0.8.2 h1:jPPGWs2sZ1UgOSgD2bClL0MJIqu58nOmIcBuXr62z1I=
 github.com/ebitengine/purego v0.8.2/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/gen2brain/raylib-go/raylib v0.0.0-20250215042252-db8e47f0e5c5 h1:k8ZAxLgb/p5TvCi5VHFHM8JdnjwShNK4A0bLIwbktAU=
 github.com/gen2brain/raylib-go/raylib v0.0.0-20250215042252-db8e47f0e5c5/go.mod h1:BaY76bZk7nw1/kVOSQObPY1v1iwVE1KHAGMfvI6oK1Q=
+gitlab.com/metakeule/fmtdate v1.2.2 h1:ce0Qnwo6PAONi6xwPr4YxdxAFIKqNfoMbHG4c49vIjk=
+gitlab.com/metakeule/fmtdate v1.2.2/go.mod h1:uZUf21xepWGLp6PgJGBbHeBVWO+/gsKi3Gdh0Fu4lGg=
 golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa h1:t2QcU6V556bFjYgu4L6C+6VrCPyJZ+eyRsABUPs1mz4=
 golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa/go.mod h1:BHOTPb3L19zxehTsLoJXVaTktb06DFgmdW6Wb9s8jqk=
 golang.org/x/sys v0.30.0 h1:QjkSwP/36a20jFYWkSue1YwXzLmsV5Gfq7Eiy72C1uc=
