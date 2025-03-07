@@ -18,7 +18,7 @@ type NavBar struct {
 }
 
 func newNavBar(simulation_ctx *Simulation) *NavBar {
-	this := NavBar{padding_size: 30, number_of_boxes: 60}
+	this := NavBar{padding_size: 30, number_of_boxes: 5}
 	this.simulation_ctx = simulation_ctx
 	this.button_size = int32((int32(this.simulation_ctx.screen_width) - this.padding_size*(this.number_of_boxes+1)) / this.number_of_boxes)
 
