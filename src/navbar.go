@@ -6,8 +6,10 @@ import (
 )
 
 const (
-// NavBar_number_of_boxes = 5
-// NavBar_padding_size = 30
+	// NavBar_number_of_boxes = 5
+	NavBar_padding_size  = 30
+	NavBar_top_margin    = 10
+	NavBar_button_height = 50
 )
 
 type NavBar struct {
@@ -18,7 +20,7 @@ type NavBar struct {
 }
 
 func newNavBar(simulation_ctx *Simulation) *NavBar {
-	this := NavBar{padding_size: 30, number_of_boxes: 5}
+	this := NavBar{padding_size: NavBar_padding_size, number_of_boxes: 5}
 	this.simulation_ctx = simulation_ctx
 	this.button_size = int32((int32(this.simulation_ctx.screen_width) - this.padding_size*(this.number_of_boxes+1)) / this.number_of_boxes)
 
@@ -32,10 +34,10 @@ func (this *NavBar) draw() {
 
 		rl.DrawRectangle(
 			i*this.button_size+i*this.padding_size+this.padding_size,
-			10,
+			NavBar_top_margin,
 			this.button_size,
-			50,
-			rl.NewColor(0xFF, 0x0, 0x0, 0xFF),
+			NavBar_button_height,
+			rl.NewColor(0x33, 0x33, 0x33, 0xFF),
 		)
 
 	}

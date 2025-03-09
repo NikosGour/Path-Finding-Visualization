@@ -13,7 +13,9 @@ type Simulation struct {
 	screen_height   int
 	screen_width    int
 
-	navbar     *NavBar
+	navbar *NavBar
+	grid   *Grid
+
 	initilized bool
 	debug_mode bool
 }
@@ -23,7 +25,7 @@ func newSimulation(debug bool) *Simulation {
 
 	log.Debug("%#v", rl.GetMonitorCount())
 
-	monitor := 2
+	monitor := 0
 	monitor_width := int32(1920)  //int32(rl.GetMonitorWidth(monitor))
 	monitor_height := int32(1080) //int32(rl.GetMonitorHeight(monitor))
 	log.Debug("%#v,%#v,%#v", monitor, monitor_width, monitor_height)
@@ -58,10 +60,14 @@ func (this *Simulation) init() {
 		this.navbar = newNavBar(this)
 	}
 
+	if this.grid == nil {
+		this.grid = NewGrid(this)
+	}
+
 	this.initilized = true
 }
 
-func (this *Simulation) runGameLoop() {
+func (this *Simulation) runMainLoop() {
 	defer rl.CloseWindow()
 
 	for !rl.WindowShouldClose() {
@@ -72,8 +78,8 @@ func (this *Simulation) runGameLoop() {
 		rl.BeginDrawing()
 		// ---------------- DRAWING ----------------------------
 		// Wait for window initilization
-		log.Debug("monitor: %v, monitor_height: %v, monitor_width: %v", this.current_monitor, this.monitor_height, this.monitor_width)
-		log.Debug("screen_height: %v, screen_width: %v", this.screen_height, this.screen_width)
+		// log.Debug("monitor: %v, monitor_height: %v, monitor_width: %v", this.current_monitor, this.monitor_height, this.monitor_width)
+		// log.Debug("screen_height: %v, screen_width: %v", this.screen_height, this.screen_width)
 		this.configureMonitorScreenSizes()
 		if !this.initilized && this.current_monitor == this.desired_monitor {
 			this.init()
@@ -86,6 +92,7 @@ func (this *Simulation) runGameLoop() {
 		// end of initilization
 		if this.initilized {
 			this.navbar.draw()
+			this.grid.draw()
 		}
 		rl.ClearBackground(rl.NewColor(0x18, 0x18, 0x18, 0xFF))
 		// ---------------- END DRAWING ------------------------

@@ -9,5 +9,5 @@ import (
 func main() {
 	fmt.Printf("DEBUG_MODE = %t\n", build.DEBUG_MODE)
 	simulation := newSimulation(build.DEBUG_MODE)
-	simulation.runGameLoop()
+	simulation.runMainLoop()
 }
