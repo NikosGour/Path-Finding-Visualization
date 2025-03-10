@@ -1,6 +1,10 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"math"
+
 	log "github.com/NikosGour/logging/src"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -18,6 +22,10 @@ const (
 	CellStateGoal
 	CellStateBorder
 	CellStatePath
+)
+
+var (
+	ErrorOutOfBounds = errors.New("OutOfBounds")
 )
 
 type Grid struct {
@@ -101,4 +109,17 @@ func (this *Grid) drawCell(x int, y int, color rl.Color) {
 	)
 
 	rl.DrawRectangleV(draw_vec, this.cell_size, color)
+}
+
+func (this *Grid) mapScreenToGrid(x int32, y int32) (int, int, error) {
+	rx := (float64(x) - float64(this.starting_point.X)) / float64(this.cell_padding+this.cell_width)
+	ry := (float64(y) - float64(this.starting_point.Y)) / float64(this.cell_padding+this.cell_width)
+	if rx < 0 || ry < 0 {
+		return 0, 0, fmt.Errorf("%s at mouse xy: {%d,%d}, rx: {%.3f}, ry: {%.3f}", ErrorOutOfBounds, x, y, rx, ry)
+	}
+	if rx >= Grid_columns || ry >= Grid_rows {
+		return 0, 0, fmt.Errorf("%s at mouse xy: {%d,%d}, rx: {%.3f}, ry: {%.3f}", ErrorOutOfBounds, x, y, rx, ry)
+	}
+
+	return int(math.Floor(rx)), int(math.Floor(ry)), nil
 }

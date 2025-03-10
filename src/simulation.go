@@ -64,6 +64,22 @@ func (this *Simulation) init() {
 		this.grid = NewGrid(this)
 	}
 
+	go func() {
+		for {
+			if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
+				x, y, err := this.grid.mapScreenToGrid(rl.GetMouseX(), rl.GetMouseY())
+				if err != nil {
+					// log.Error("%s", err)
+				} else {
+					if this.grid.cells[y][x] != CellStateBorder {
+						log.Debug("{%d,%d}", x, y)
+						this.grid.cells[y][x] = CellStateBorder
+					}
+				}
+			}
+		}
+	}()
+
 	this.initilized = true
 }
 
@@ -71,12 +87,6 @@ func (this *Simulation) runMainLoop() {
 	defer rl.CloseWindow()
 
 	for !rl.WindowShouldClose() {
-		// this.configureMonitorScreenSizes()
-		// log.Debug("monitor: %v, monitor_height: %v, monitor_width: %v", this.current_monitor, this.monitor_height, this.monitor_width)
-		// log.Debug("screen_height: %v, screen_width: %v", this.screen_height, this.screen_width)
-
-		rl.BeginDrawing()
-		// ---------------- DRAWING ----------------------------
 		// Wait for window initilization
 		// log.Debug("monitor: %v, monitor_height: %v, monitor_width: %v", this.current_monitor, this.monitor_height, this.monitor_width)
 		// log.Debug("screen_height: %v, screen_width: %v", this.screen_height, this.screen_width)
@@ -84,12 +94,12 @@ func (this *Simulation) runMainLoop() {
 		if !this.initilized && this.current_monitor == this.desired_monitor {
 			this.init()
 		}
-		// if !this.initilized && this.screen_height > 600 && this.screen_width > 800 {
-		// 	this.init()
-		// } else if !this.initilized && (this.monitor_height == 600 || this.monitor_width == 800) {
-		// 	this.init()
-		// }
 		// end of initilization
+
+		if this.initilized {
+		}
+		rl.BeginDrawing()
+		// ---------------- DRAWING ----------------------------
 		if this.initilized {
 			this.navbar.draw()
 			this.grid.draw()
