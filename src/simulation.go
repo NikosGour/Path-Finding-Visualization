@@ -13,8 +13,9 @@ type Simulation struct {
 	screen_height   int
 	screen_width    int
 
-	navbar *NavBar
-	grid   *Grid
+	navbar    *NavBar
+	grid      *Grid
+	color_hud *ColorHud
 
 	initilized bool
 	debug_mode bool
@@ -64,6 +65,10 @@ func (this *Simulation) init() {
 		this.grid = NewGrid(this)
 	}
 
+	if this.color_hud == nil {
+		this.color_hud = newColorHud(this)
+	}
+
 	go func() {
 		for {
 			if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
@@ -96,15 +101,15 @@ func (this *Simulation) runMainLoop() {
 		}
 		// end of initilization
 
-		if this.initilized {
-		}
 		rl.BeginDrawing()
 		// ---------------- DRAWING ----------------------------
+		rl.ClearBackground(rl.NewColor(0x18, 0x18, 0x18, 0xFF))
+
 		if this.initilized {
 			this.navbar.draw()
 			this.grid.draw()
+			this.color_hud.draw()
 		}
-		rl.ClearBackground(rl.NewColor(0x18, 0x18, 0x18, 0xFF))
 		// ---------------- END DRAWING ------------------------
 		rl.EndDrawing()
 	}
