@@ -13,6 +13,7 @@ type Simulation struct {
 	screen_height   int
 	screen_width    int
 
+	// TODO : Change name of NavBar to AlgorithmHud
 	navbar    *NavBar
 	grid      *Grid
 	color_hud *ColorHud

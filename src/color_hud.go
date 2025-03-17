@@ -40,5 +40,19 @@ func (this *ColorHud) draw() {
 			rl.NewColor(0x33, 0x33, 0x33, 0xFF),
 		)
 
+		switch i {
+
+		case 0:
+			text_size := rl.MeasureTextEx(rl.GetFontDefault(), "Maria", 24, 1)
+			button_width := this.button_size
+			log.Debug("text_size = %#v", text_size)
+			rl.DrawText(
+				"Maria",
+				i*this.button_size+i*this.padding_size+this.padding_size+int32((float32(button_width)-text_size.X)/2),
+				starting_point+(int32(this.simulation_ctx.screen_height)-starting_point-ColorHud_button_height)/2+int32((ColorHud_button_height-text_size.Y)/2),
+				24,
+				rl.NewColor(0xFF, 0x0, 0xFF, 0xFF),
+			)
+		}
 	}
 }
