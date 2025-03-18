@@ -126,26 +126,33 @@ func (this *Simulation) configureMonitorScreenSizes() {
 }
 
 func (this *Simulation) HandleMouseEvents() {
+	var prev_time time.Time = time.Now().Add(-time.Second * 10)
 	for {
 
 		// if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
 		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
 			mouse := rl.GetMousePosition()
+			time_now := time.Now()
+			log.Debug("prev: %+v\n\t\t\t\t      time: %+v", prev_time, time_now)
 
 			end_of_algorithm_hud_y := NavBar_top_margin + NavBar_button_height
 			end_of_grid_y := end_of_algorithm_hud_y + NavBar_top_margin + (this.grid.cell_width+this.grid.cell_padding)*Grid_rows
 
-			if mouse.Y <= float32(end_of_algorithm_hud_y+NavBar_top_margin/2) {
-				// TODO: Algorithm Hud logic
-				log.Debug("Algorithm Hud")
-			} else if mouse.Y <= float32(end_of_grid_y+this.grid.cell_padding) {
-				// Grid Logic
-				log.Debug("Grid")
-				log.Debug("%+v", time.Now())
-			} else {
-				// Color hud + Speed slider logic
-				log.Debug("Color Hud")
+			if time_now != prev_time {
+				if mouse.Y <= float32(end_of_algorithm_hud_y+NavBar_top_margin/2) {
+					// TODO: Algorithm Hud logic
+					log.Debug("Algorithm Hud")
+				} else if mouse.Y <= float32(end_of_grid_y+this.grid.cell_padding) {
+					// Grid Logic
+					log.Debug("Grid")
+				} else {
+					// Color hud + Speed slider logic
+					log.Debug("Color Hud")
+				}
+
+				prev_time = time_now
 			}
+
 			// x, y, err := this.grid.mapScreenToGrid(rl.GetMouseX(), rl.GetMouseY())
 			// if err != nil {
 			// 	// log.Error("%s", err)
