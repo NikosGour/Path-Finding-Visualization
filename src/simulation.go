@@ -1,9 +1,16 @@
 package main
 
 import (
+	_ "embed"
+	"errors"
+	"time"
+
 	log "github.com/NikosGour/logging/src"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
+
+//go:embed assets/Lexend-Regular.ttf
+var default_font []byte
 
 type Simulation struct {
 	desired_monitor int
@@ -12,6 +19,8 @@ type Simulation struct {
 	monitor_width   int
 	screen_height   int
 	screen_width    int
+
+	default_font rl.Font
 
 	// TODO : Change name of NavBar to AlgorithmHud
 	navbar    *NavBar
@@ -22,15 +31,18 @@ type Simulation struct {
 	debug_mode bool
 }
 
-func newSimulation(debug bool) *Simulation {
-	rl.SetConfigFlags(rl.FlagWindowResizable)
+var (
+	ErrorUnreachable = errors.New("Unreachable")
+)
 
-	log.Debug("%#v", rl.GetMonitorCount())
+func newSimulation(debug bool) *Simulation {
+	rl.SetConfigFlags(rl.FlagWindowResizable | rl.FlagVsyncHint | rl.FlagWindowHighdpi | rl.FlagMsaa4xHint)
+
+	log.Debug("Monitor Count: %#v", rl.GetMonitorCount())
 
 	monitor := 0
 	monitor_width := int32(1920)  //int32(rl.GetMonitorWidth(monitor))
 	monitor_height := int32(1080) //int32(rl.GetMonitorHeight(monitor))
-	log.Debug("%#v,%#v,%#v", monitor, monitor_width, monitor_height)
 
 	rl.InitWindow(
 		monitor_width,
@@ -42,10 +54,11 @@ func newSimulation(debug bool) *Simulation {
 	rl.SetWindowPosition(int(rl.GetMonitorPosition(monitor).X), int(rl.GetMonitorPosition(monitor).Y))
 	rl.SetWindowMonitor(monitor)
 
-	// rl.ToggleFullscreen()
-
 	this := &Simulation{desired_monitor: monitor, initilized: false, debug_mode: debug}
 	this.configureMonitorScreenSizes()
+
+	this.default_font = rl.LoadFontFromMemory(".ttf", default_font, 512, nil)
+	rl.SetTextureFilter(this.default_font.Texture, rl.FilterPoint)
 	log.Debug("%#v", this)
 	return this
 }
@@ -70,21 +83,7 @@ func (this *Simulation) init() {
 		this.color_hud = newColorHud(this)
 	}
 
-	go func() {
-		for {
-			if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
-				x, y, err := this.grid.mapScreenToGrid(rl.GetMouseX(), rl.GetMouseY())
-				if err != nil {
-					// log.Error("%s", err)
-				} else {
-					if this.grid.cells[y][x] != CellStateBorder {
-						log.Debug("{%d,%d}", x, y)
-						this.grid.cells[y][x] = CellStateBorder
-					}
-				}
-			}
-		}
-	}()
+	go this.HandleMouseEvents()
 
 	this.initilized = true
 }
@@ -124,4 +123,38 @@ func (this *Simulation) configureMonitorScreenSizes() {
 
 	this.monitor_height = rl.GetMonitorHeight(this.current_monitor)
 	this.monitor_width = rl.GetMonitorWidth(this.current_monitor)
+}
+
+func (this *Simulation) HandleMouseEvents() {
+	for {
+
+		// if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
+		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
+			mouse := rl.GetMousePosition()
+
+			end_of_algorithm_hud_y := NavBar_top_margin + NavBar_button_height
+			end_of_grid_y := end_of_algorithm_hud_y + NavBar_top_margin + (this.grid.cell_width+this.grid.cell_padding)*Grid_rows
+
+			if mouse.Y <= float32(end_of_algorithm_hud_y+NavBar_top_margin/2) {
+				// TODO: Algorithm Hud logic
+				log.Debug("Algorithm Hud")
+			} else if mouse.Y <= float32(end_of_grid_y+this.grid.cell_padding) {
+				// Grid Logic
+				log.Debug("Grid")
+				log.Debug("%+v", time.Now())
+			} else {
+				// Color hud + Speed slider logic
+				log.Debug("Color Hud")
+			}
+			// x, y, err := this.grid.mapScreenToGrid(rl.GetMouseX(), rl.GetMouseY())
+			// if err != nil {
+			// 	// log.Error("%s", err)
+			// } else {
+			// 	if this.grid.cells[y][x].state != CellStateBorder {
+			// 		log.Debug("{%d,%d}", x, y)
+			// 		this.grid.cells[y][x].state = CellStateBorder
+			// 	}
+			// }
+		}
+	}
 }
