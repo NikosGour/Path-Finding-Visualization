@@ -15,6 +15,7 @@ tags="-tags=debug"
 echo "Project Directory: $project_dir"
 cd $project_dir
 
+# If you are using windows, set the windows user name
 windows_user="ngkil"
 
 windows_flag=false

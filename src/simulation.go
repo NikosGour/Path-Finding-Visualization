@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"errors"
+	"os"
 	"time"
 
 	log "github.com/NikosGour/logging/src"
@@ -126,42 +127,55 @@ func (this *Simulation) configureMonitorScreenSizes() {
 }
 
 func (this *Simulation) HandleMouseEvents() {
-	var prev_time time.Time = time.Now().Add(-time.Second * 10)
+	state := CellStateBorder
 	for {
-
-		// if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
-		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
+		if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
 			mouse := rl.GetMousePosition()
-			time_now := time.Now()
-			log.Debug("prev: %+v\n\t\t\t\t      time: %+v", prev_time, time_now)
 
 			end_of_algorithm_hud_y := NavBar_top_margin + NavBar_button_height
 			end_of_grid_y := end_of_algorithm_hud_y + NavBar_top_margin + (this.grid.cell_width+this.grid.cell_padding)*Grid_rows
 
-			if time_now != prev_time {
-				if mouse.Y <= float32(end_of_algorithm_hud_y+NavBar_top_margin/2) {
-					// TODO: Algorithm Hud logic
-					log.Debug("Algorithm Hud")
-				} else if mouse.Y <= float32(end_of_grid_y+this.grid.cell_padding) {
-					// Grid Logic
-					log.Debug("Grid")
-				} else {
-					// Color hud + Speed slider logic
-					log.Debug("Color Hud")
-				}
+			if mouse.Y <= float32(end_of_algorithm_hud_y+NavBar_top_margin/2) {
+				// TODO: Algorithm Hud logic
+				// log.Debug("Algorithm Hud")
+			} else if mouse.Y <= float32(end_of_grid_y+this.grid.cell_padding) {
+				// Grid Logic
+				// log.Debug("Grid")
 
-				prev_time = time_now
+				x, y, err := this.grid.mapScreenToGrid(int32(mouse.X), int32(mouse.Y))
+				if err != nil {
+					log.Error("%s", err)
+				} else {
+					if this.grid.cells[y][x].state != state {
+						log.Debug("{%d,%d}", x, y)
+						this.grid.cells[y][x].state = state
+					}
+				}
+			} else {
+				// Color hud + Speed slider logic
+				// log.Debug("Color Hud")
+				for i, button := range this.color_hud.buttons {
+					if rl.CheckCollisionPointRec(mouse, button) {
+						switch i {
+						case 0:
+							state = CellStateStart
+						case 1:
+							state = CellStateGoal
+						case 2:
+							state = CellStateBorder
+						case 3:
+							state = CellStateBlank
+						default:
+							log.Error("%s: ColorHud_number_of_buttons is not the same as the cases in switch of Simulation.HandleMouseEvents(). number_of_buttons: {%d}, i: {%d}", ErrorUnreachable, ColorHud_number_of_buttons, i)
+							os.Exit(1)
+						}
+					}
+				}
 			}
 
-			// x, y, err := this.grid.mapScreenToGrid(rl.GetMouseX(), rl.GetMouseY())
-			// if err != nil {
-			// 	// log.Error("%s", err)
-			// } else {
-			// 	if this.grid.cells[y][x].state != CellStateBorder {
-			// 		log.Debug("{%d,%d}", x, y)
-			// 		this.grid.cells[y][x].state = CellStateBorder
-			// 	}
-			// }
+			time.Sleep(time.Millisecond)
+
 		}
+
 	}
 }
